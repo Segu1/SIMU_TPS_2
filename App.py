@@ -51,17 +51,15 @@ form_card = dbc.Card(
                         ),
                         dbc.Col(
                             [
-                                dbc.Label("Probabilidad de ausencia (0 a 1)"),
+                                dbc.Label("Beneficio a evaluar"),
                                 dbc.Input(
                                     id="input-prob",
                                     type="number",
-                                    min=0,
-                                    max=1,
-                                    step=0.01,
+                                    step=100,
                                     value=None,
-                                    placeholder="Ej: 0.10",
+                                    placeholder="Ej: 1000",
                                 ),
-                                dbc.FormText("Por ejemplo 0.10 = 10%."),
+                                dbc.FormText("Por ejemplo: 600"),
                             ],
                             md=6,
                             className="mb-3"
