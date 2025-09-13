@@ -126,8 +126,19 @@ tabla_card = dbc.Card(
                          ["Iteración", "rnd", "Ausentes", "Presentes", "Producción",
                           "Costo total", "Beneficio", "Beneficio acum.", "≥ umbral"]],
                 data=[],
-                style_table={"overflowX": "auto"},
-                style_cell={"fontFamily": "Inter, system-ui", "fontSize": 13},
+                page_action="none",          # ← sin paginación
+                virtualization=True,         # ← renderiza solo lo visible
+                fixed_rows={"headers": True},# ← header fijo al hacer scroll
+                style_table={
+                    "height": "60vh",        # altura del viewport (ajustá a gusto)
+                    "overflowY": "auto",
+                    "overflowX": "auto"
+                },
+                style_cell={
+                    "fontFamily": "Inter, system-ui",
+                    "fontSize": 13,
+                    "minWidth": "110px"      # evita saltos si hay números largos
+                },
             )
         ),
     ],
