@@ -38,10 +38,11 @@ form_card = dbc.Card(
                                 dbc.Input(
                                     id="input-nomina",
                                     type="number",
-                                    min=1,
+                                    min=21,
+                                    max=24,
                                     step=1,
                                     value=None,
-                                    placeholder="Ej: 50",
+                                    placeholder="Ej: 24",
                                 ),
                                 dbc.FormText("Cantidad total de empleados a evaluar."),
                             ],
