@@ -4,9 +4,8 @@
 import math
 import random
 
-
 def tabla_de_freq(freq: float) -> int:
-    # Rango [0,1) particionado como definiste (con 'and' y límites bien formados)
+    # Distribución de ausentismo (100 días): 0:36%, 1:38%, 2:19%, 3:6%, 4:1%, 5+:0%
     if 0.0 <= freq < 0.36:
         return 0
     elif freq < 0.74:
@@ -36,11 +35,12 @@ def ejecutar_montecarlo(n: int, cant_obreros: int, valor_mayor_que: float):
         ganancia = ganancia_base if hay_produccion else 0.0
         costo_produccion_x_dia = costo_produccion_x_dia_base if hay_produccion else 0.0
 
-        cost_mano_obra_total = cant_obreros * costo_mano_obra_x_obrero
-        costo_total = costo_produccion_x_dia + cost_mano_obra_total
+        costo_mano_obra_total = cant_obreros * costo_mano_obra_x_obrero
+        costo_total = costo_produccion_x_dia + costo_mano_obra_total
         beneficio = ganancia - costo_total
         beneficio_acum += beneficio
 
+        # contador “normal” para probabilidad
         if beneficio >= valor_mayor_que:
             ocurrencias += 1
 
@@ -53,7 +53,8 @@ def ejecutar_montecarlo(n: int, cant_obreros: int, valor_mayor_que: float):
             "Costo total": round(costo_total, 2),
             "Beneficio": round(beneficio, 2),
             "Beneficio acum.": round(beneficio_acum, 2),
-            "≥ umbral": "✔" if beneficio >= valor_mayor_que else "✖",
+            # contador ACUMULADO hasta esta fila
+            "Contador ≥ umbral": ocurrencias,
         })
 
     probabilidad = math.trunc((ocurrencias / n) * 10000) / 10000
