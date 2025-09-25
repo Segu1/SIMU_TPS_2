@@ -4,23 +4,25 @@
 import math
 import random
 
-def tabla_de_freq(freq: float) -> int:
+def tabla_de_freq(freq: float, do, d1, d2, d3, d4) -> int:
     # Distribución de ausentismo (100 días): 0:36%, 1:38%, 2:19%, 3:6%, 4:1%, 5+:0%
-    if 0.0 <= freq < 0.36:
+    if 0 <= freq < (do/100):
         return 0
-    elif freq < 0.74:
+    elif freq < ((d1/100) + (do/100)):
         return 1
-    elif freq < 0.93:
+    elif freq < (d2/100 + (d1/100) + (do/100)):
         return 2
-    elif freq < 0.99:
+    elif freq < ((d3/100 + (d1/100) + (do/100))):
         return 3
-    else:
+    elif freq < ((d4/100) + (d3/100) + (d2/100) + (d1/100) + (do/100)):
         return 4
+    else:
+        return 5
 
-def ejecutar_montecarlo(n: int, cant_obreros: int, valor_mayor_que: float):
-    costo_mano_obra_x_obrero = 30.0
-    costo_produccion_x_dia_base = 2400.0
-    ganancia_base = 4000.0
+def ejecutar_montecarlo(n: int, cant_obreros: int, valor_mayor_que: float, d0, d1, d2, d3, d4, ingreso, costo_fabricacion, costo_obrero):
+    costo_mano_obra_x_obrero = costo_obrero
+    costo_produccion_x_dia_base = costo_fabricacion
+    ganancia_base = ingreso
 
     beneficio_acum = 0.0
     ocurrencias = 0
@@ -28,7 +30,7 @@ def ejecutar_montecarlo(n: int, cant_obreros: int, valor_mayor_que: float):
 
     for i in range(n):
         rnd = random.random()
-        obreros_ausentes = tabla_de_freq(rnd)
+        obreros_ausentes = tabla_de_freq(rnd, d0, d1, d2, d3, d4)
         obreros_presentes = cant_obreros - obreros_ausentes
 
         hay_produccion = (obreros_presentes >= 20)

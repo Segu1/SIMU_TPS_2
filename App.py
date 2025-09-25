@@ -41,7 +41,7 @@ form_card = dbc.Card(
                             [
                                 dbc.Label("Tamaño de nómina (empleados)"),
                                 dbc.Input(id="input-nomina", type="number", step=1,
-                                          value=None, placeholder="Ej: 24"),
+                                          value=21, placeholder="Ej: 24"),
                                 dbc.FormText("Total de empleados permanentes.")
                             ],
                             md=6, className="mb-3"
@@ -49,27 +49,102 @@ form_card = dbc.Card(
                         dbc.Col(
                             [
                                 dbc.Label("Número de días (n)"),
-                                dbc.Input(id="input-dias", type="number", step=10,
-                                          value=None, placeholder="Ej: 560"),
+                                dbc.Input(id="input-dias", type="number", step=5,
+                                          value=None, placeholder="Ej: 5"),
                                 dbc.FormText("Iteraciones de la simulación (soporta N ≥ 100000).")
                             ],
                             md=6, className="mb-3"
                         ),
                         dbc.Col(
                             [
+                                dbc.Label("Dias (cantidades de 0 ausentes)"),
+                                dbc.Input(id="input-dia-0", type="number", step=1,
+                                          value=36, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 0 obreros.")
+                            ],
+                            md=6, className="mb-3"
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Label("Dias (cantidades de 1 ausentes)"),
+                                dbc.Input(id="input-dia-1", type="number", step=1,
+                                          value=38, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 1 obrero.")
+                            ],
+                            md=6, className="mb-3"
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Label("Dias (cantidades de 2 ausentes)"),
+                                dbc.Input(id="input-dia-2", type="number", step=1,
+                                          value=19, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 2 obreros.")
+                            ],
+                            md=6, className="mb-3"
+                        ),  dbc.Col(
+                            [
+                                dbc.Label("Dias (cantidades de 3 ausentes)"),
+                                dbc.Input(id="input-dia-3", type="number", step=1,
+                                          value=6, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 3 obreros")
+                            ],
+                            md=6, className="mb-3"
+                        ),
+                        dbc.Col(
+                            [
+                                dbc.Label("Dias (cantidades de 4 ausentes)"),
+                                dbc.Input(id="input-dia-4", type="number", step=1,
+                                          value=1, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 4 obreros")
+                            ],
+                            md=6, className="mb-3"
+                        ), dbc.Col(
+                            [
+                                dbc.Label("Dias (cantidades de 5 ausentes o más)"),
+                                dbc.Input(id="input-dia-5", type="number", step=1,
+                                          value=0, placeholder="Dias"),
+                                dbc.FormText("Cantidad de dias que faltan 5 o más")
+                            ],
+                            md=6, className="mb-3"
+                        ),
+                        dbc.Col(
+                            [
                                 dbc.Label("Beneficio umbral"),
-                                dbc.Input(id="input-prob", type="number", step=100,
+                                dbc.Input(id="input-prob", type="number", step=50,
                                           value=None, placeholder="Ej: 1000"),
                                 dbc.FormText("Para P(Beneficio ≥ umbral).")
                             ],
                             md=6, className="mb-3"
                         ),
+                        dbc.Col(
+                            [
+                                dbc.Label("Ingreso diario"),
+                                dbc.Input(id="input-ingreso", type="number", step=50,
+                                          value=4000, placeholder="Ej: 1000"),
+                            ],
+                            md=6, className="mb-3"
+                        ),    dbc.Col(
+                            [
+                                dbc.Label("Costos por obrero"),
+                                dbc.Input(id="input-obrero", type="number", step=1,
+                                          value=30, placeholder="Ej: 10"),
+                            ],
+                            md=6, className="mb-3"
+                        ), dbc.Col(
+                            [
+                                dbc.Label("Costos variables por fabricar"),
+                                dbc.Input(id="input-costo-fabricar", type="number", step=1,
+                                          value=2400, placeholder="Ej: 2400"),
+                            ],
+                            md=6, className="mb-3"
+                        ),
+
                         # ---- NUEVOS PARÁMETROS DE VENTANA (i, j) ----
                         dbc.Col(
                             [
                                 dbc.Label("i = cantidad de iteraciones a mostrar"),
                                 dbc.Input(id="input-i", type="number", step=1,
-                                          value=None, placeholder="Ej: 100"),
+                                          value=None),
                                 dbc.FormText("Cuántas filas visualizar en la tabla.")
                             ],
                             md=6, className="mb-3"
@@ -165,12 +240,22 @@ app.layout = dbc.Container(
     Input("input-prob", "value"),
     Input("input-i", "value"),
     Input("input-j", "value"),
+    Input("input-dia-0", "value"),
+    Input("input-dia-1", "value"),
+    Input("input-dia-2", "value"),
+    Input("input-dia-3", "value"),
+    Input("input-dia-4", "value"),
+    Input("input-dia-5", "value"),
+
 )
-def validar(nomina, dias, umbral, i, j):
+def validar(nomina, dias, umbral, i, j, d1, d2, d3, d4, d5, d6):
     msg = None
 
     if None in (nomina, dias, umbral, i, j):
         return True, msg
+
+    if sum([d1, d2, d3,d4,d5,d6]) != 100:
+        return True, "La suma de los dias no es igual a 100"
 
     if not (21 <= int(nomina) <= 24):
         msg = dbc.Alert("La nómina debe estar entre 21 y 24.", color="warning", dismissable=True)
@@ -202,16 +287,26 @@ def validar(nomina, dias, umbral, i, j):
     State("input-prob", "value"),
     State("input-i", "value"),
     State("input-j", "value"),
+    Input("input-dia-0", "value"),
+    Input("input-dia-1", "value"),
+    Input("input-dia-2", "value"),
+    Input("input-dia-3", "value"),
+    Input("input-dia-4", "value"),
+    Input("input-dia-5", "value"),
+    Input("input-obrero", "value"),
+    Input("input-ingreso", "value"),
+    Input("input-costo-fabricar", "value"),
     prevent_initial_call=True
 )
-def ejecutar(_, nomina, dias, umbral, i, j):
+def ejecutar(_, nomina, dias, umbral, i, j, d0, d1, d2, d3, d4, d5, costo_obrero, ingreso, costo_fabricar):
     n = int(dias)
     cant_obreros = int(nomina)
     valor_mayor_que = float(umbral)
     i = int(i)
     j = int(j)
 
-    prob, benef_acum, rows = mc.ejecutar_montecarlo(n, cant_obreros, valor_mayor_que)
+    prob, benef_acum, rows = mc.ejecutar_montecarlo(n, cant_obreros, valor_mayor_que, d0, d1, d2, d3, d4, ingreso,
+                                                    costo_fabricar, costo_obrero)
 
     # ventana: mostrar solo desde j (1-index) i iteraciones
     start = max(0, j - 1)
